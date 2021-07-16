@@ -1,9 +1,9 @@
 const {
   getAllWargaHandler,
   addWargaHandler,
-  getWargaByNikHandler,
-  updateWargaByNikHandler,
-  deleteWargaByNikHandler,
+  getWargaByIdHandler,
+  updateWargaByIdHandler,
+  deleteWargaByIdHandler,
 } = require('./handler');
 const {PostWargaValidation} = require('./validation');
 
@@ -30,18 +30,18 @@ const routes = [
   },
   {
     method: 'GET',
-    path: '/daftar_warga/{nik}',
-    handler: getWargaByNikHandler,
+    path: '/daftar_warga/{id}',
+    handler: getWargaByIdHandler,
   },
   {
     method: 'PUT',
-    path: '/daftar_warga/{nik}',
-    handler: updateWargaByNikHandler,
+    path: '/daftar_warga/{id}',
+    handler: updateWargaByIdHandler,
   },
   {
     method: 'DELETE',
-    path: '/daftar_warga/{nik}',
-    handler: deleteWargaByNikHandler,
+    path: '/daftar_warga/{id}',
+    handler: deleteWargaByIdHandler,
   },
 ];
 module.exports = routes;

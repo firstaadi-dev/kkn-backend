@@ -1,4 +1,5 @@
 const {wargaModel} = require('./models');
+const {Mongoose} = require('../config/database');
 
 const getAllWargaHandler = async (request, h) => {
   const result = await wargaModel.find({});
@@ -7,17 +8,21 @@ const getAllWargaHandler = async (request, h) => {
       .response({
         status: 'success',
         message: 'Daftar warga berhasil ditemukan',
-        data: result,
+        docs: result,
+        items: {total: result.length},
       })
-      .code(201);
-  } else if (result.length === 0) {
-    return h
-      .response({
-        status: 'fail',
-        message: 'Daftar warga tidak ditemukan',
-      })
-      .code(404);
+      .code(201)
+      .header('Access-Control-Expose-Headers', 'X-Total-Count')
+      .header('X-Total-Count', result.length);
   }
+  // else if (result.length === 0) {
+  //   return h
+  //     .response({
+  //       status: 'fail',
+  //       message: 'Daftar warga tidak ditemukan',
+  //     })
+  //     .code(404);
+  // }
   return h
     .response({
       status: 'fail',
@@ -36,7 +41,9 @@ const addWargaHandler = async (request, h) => {
         message: 'Data warga berhasil ditambahkan',
         data: result,
       })
-      .code(201);
+      .code(201)
+      .header('Access-Control-Expose-Headers', 'X-Total-Count')
+      .header('X-Total-Count', result.length);
   } catch {
     return h
       .response({
@@ -47,17 +54,22 @@ const addWargaHandler = async (request, h) => {
   }
 };
 
-const getWargaByNikHandler = async (request, h) => {
-  const {nik} = request.params;
-  const result = await wargaModel.find({nik: nik}).exec();
+const getWargaByIdHandler = async (request, h) => {
+  const {id} = request.params;
+  const result = await wargaModel
+    .find({_id: new Mongoose.Types.ObjectId(id)})
+    .exec();
   if (result.length !== 0) {
     return h
       .response({
         status: 'success',
         message: 'Data warga berhasil ditemukan',
-        data: result,
+        docs: result,
+        items: {total: result.length},
       })
-      .code(201);
+      .code(201)
+      .header('Access-Control-Expose-Headers', 'X-Total-Count')
+      .header('X-Total-Count', result.length);
   }
   return h
     .response({
@@ -67,19 +79,24 @@ const getWargaByNikHandler = async (request, h) => {
     .code(404);
 };
 
-const updateWargaByNikHandler = async (request, h) => {
-  const {nik} = request.params;
+const updateWargaByIdHandler = async (request, h) => {
+  const {id} = request.params;
   const result = await wargaModel.findOneAndUpdate(
-    {nik: nik},
+    {_id: new Mongoose.Types.ObjectId(id)},
     request.payload,
     {new: true, useFindAndModify: false}
   );
   if (result !== null) {
-    return h.response({
-      status: 'success',
-      message: 'Data warga berhasil diperbarui',
-      data: result,
-    });
+    return h
+      .response({
+        status: 'success',
+        message: 'Data warga berhasil diperbarui',
+        docs: result,
+        items: {total: result.length},
+      })
+      .code(201)
+      .header('Access-Control-Expose-Headers', 'X-Total-Count')
+      .header('X-Total-Count', result.length);
   } else if (result === null) {
     return h
       .response({
@@ -96,16 +113,20 @@ const updateWargaByNikHandler = async (request, h) => {
     .code(500);
 };
 
-const deleteWargaByNikHandler = async (request, h) => {
-  const {nik} = request.params;
-  const result = await wargaModel.deleteOne({nik: nik});
+const deleteWargaByIdHandler = async (request, h) => {
+  const {id} = request.params;
+  const result = await wargaModel.deleteOne({
+    _id: new Mongoose.Types.ObjectId(id),
+  });
   if (result.deletedCount !== 0) {
     return h
       .response({
         status: 'success',
         message: 'Data berhasil dihapus',
+        docs: result,
       })
-      .code(200);
+      .code(200)
+      
   } else if (result.deletedCount === 0) {
     return h
       .response({
@@ -125,7 +146,7 @@ const deleteWargaByNikHandler = async (request, h) => {
 module.exports = {
   getAllWargaHandler,
   addWargaHandler,
-  getWargaByNikHandler,
-  updateWargaByNikHandler,
-  deleteWargaByNikHandler,
+  getWargaByIdHandler,
+  updateWargaByIdHandler,
+  deleteWargaByIdHandler,
 };
