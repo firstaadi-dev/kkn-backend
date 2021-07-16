@@ -11,7 +11,7 @@ const getAllWargaHandler = async (request, h) => {
         docs: result,
         items: {total: result.length},
       })
-      .code(201)
+      .code(200)
       .header('Access-Control-Expose-Headers', 'X-Total-Count')
       .header('X-Total-Count', result.length);
   }
@@ -67,7 +67,7 @@ const getWargaByIdHandler = async (request, h) => {
         docs: result,
         items: {total: result.length},
       })
-      .code(201)
+      .code(200)
       .header('Access-Control-Expose-Headers', 'X-Total-Count')
       .header('X-Total-Count', result.length);
   }
@@ -94,7 +94,7 @@ const updateWargaByIdHandler = async (request, h) => {
         docs: result,
         items: {total: result.length},
       })
-      .code(201)
+      .code(200)
       .header('Access-Control-Expose-Headers', 'X-Total-Count')
       .header('X-Total-Count', result.length);
   } else if (result === null) {
