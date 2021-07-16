@@ -1,4 +1,4 @@
-const {wargaModel} = require('./models');
+const {wargaModel, iuranModel} = require('./models');
 const {Mongoose} = require('../config/database');
 
 const getAllWargaHandler = async (request, h) => {
@@ -39,7 +39,8 @@ const addWargaHandler = async (request, h) => {
       .response({
         status: 'success',
         message: 'Data warga berhasil ditambahkan',
-        data: result,
+        docs: result,
+        items: {total: result.length},
       })
       .code(201)
       .header('Access-Control-Expose-Headers', 'X-Total-Count')
@@ -123,10 +124,137 @@ const deleteWargaByIdHandler = async (request, h) => {
       .response({
         status: 'success',
         message: 'Data berhasil dihapus',
+      })
+      .code(200);
+  } else if (result.deletedCount === 0) {
+    return h
+      .response({
+        status: 'fail',
+        message: 'Data tidak ditemukan',
+      })
+      .code(404);
+  }
+  return h
+    .response({
+      status: 'fail',
+      message: 'Terjadi kesalahan pada server',
+    })
+    .code(500);
+};
+
+const getAllIuranHandler = async (request, h) => {
+  const result = await iuranModel.find({});
+  if (result.length !== 0) {
+    return h
+      .response({
+        status: 'success',
+        message: 'Daftar iuran berhasil ditemukan',
         docs: result,
+        items: {total: result.length},
       })
       .code(200)
-      
+      .header('Access-Control-Expose-Headers', 'X-Total-Count')
+      .header('X-Total-Count', result.length);
+  }
+  return h
+    .response({
+      status: 'fail',
+      message: 'Terjadi kesalahan pada server',
+    })
+    .code(500);
+};
+const getIuranByIdHandler = async (request, h) => {
+  const {id} = request.params;
+  const result = await iuranModel
+    .find({_id: new Mongoose.Types.ObjectId(id)})
+    .exec();
+  if (result.length !== 0) {
+    return h
+      .response({
+        status: 'success',
+        message: 'Data iuran berhasil ditemukan',
+        docs: result,
+        items: {total: result.length},
+      })
+      .code(200)
+      .header('Access-Control-Expose-Headers', 'X-Total-Count')
+      .header('X-Total-Count', result.length);
+  }
+  return h
+    .response({
+      status: 'fail',
+      message: 'Data iuran tidak ditemukan',
+    })
+    .code(404);
+};
+const addIuranHandler = async (request, h) => {
+  try {
+    const iuran = new iuranModel(request.payload);
+    const result = await iuran.save();
+    return h
+      .response({
+        status: 'success',
+        message: 'Data iuran berhasil ditambahkan',
+        docs: result,
+        items: {total: result.length},
+      })
+      .code(201)
+      .header('Access-Control-Expose-Headers', 'X-Total-Count')
+      .header('X-Total-Count', result.length);
+  } catch (error) {
+    return h
+      .response({
+        status: 'fail',
+        message: error,
+      })
+      .code(500);
+  }
+};
+const updateIuranByIdHandler = async (request, h) => {
+  const {id} = request.params;
+  const result = await iuranModel.findOneAndUpdate(
+    {_id: new Mongoose.Types.ObjectId(id)},
+    request.payload,
+    {new: true, useFindAndModify: false}
+  );
+  if (result !== null) {
+    return h
+      .response({
+        status: 'success',
+        message: 'Data iuran berhasil diperbarui',
+        docs: result,
+        items: {total: result.length},
+      })
+      .code(200)
+      .header('Access-Control-Expose-Headers', 'X-Total-Count')
+      .header('X-Total-Count', result.length);
+  } else if (result === null) {
+    return h
+      .response({
+        status: 'fail',
+        message: 'Data tidak ditemukan',
+      })
+      .code(404);
+  }
+  return h
+    .response({
+      status: 'fail',
+      message: 'Terjadi kesalahan pada server',
+    })
+    .code(500);
+};
+const deleteIuranByIdHandler = async (request, h) => {
+  const {id} = request.params;
+  const result = await iuranModel.deleteOne({
+    _id: new Mongoose.Types.ObjectId(id),
+  });
+  if (result.deletedCount !== 0) {
+    return h
+      .response({
+        status: 'success',
+        message: 'Data berhasil dihapus',
+      })
+      .code(200);
   } else if (result.deletedCount === 0) {
     return h
       .response({
@@ -149,4 +277,9 @@ module.exports = {
   getWargaByIdHandler,
   updateWargaByIdHandler,
   deleteWargaByIdHandler,
+  getAllIuranHandler,
+  getIuranByIdHandler,
+  addIuranHandler,
+  updateIuranByIdHandler,
+  deleteIuranByIdHandler,
 };

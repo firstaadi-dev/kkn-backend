@@ -18,4 +18,16 @@ const wargaModel = Mongoose.model(
   'daftar_warga'
 );
 
-module.exports = {wargaModel};
+const iuranModel = Mongoose.model(
+  'iuran_warga',
+  {
+    nik: Number,
+    nama: String,
+    jenis: String,
+    nominal: Number,
+    tanggal: Date,
+    Keterangan: String,
+  },
+  'iuran_warga'
+);
+module.exports = {wargaModel, iuranModel};
