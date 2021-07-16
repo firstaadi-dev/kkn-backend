@@ -1,37 +1,47 @@
-const {getAllWargaHandler, addWargaHandler} = require('./handler');
-const Joi = require('joi');
+const {
+  getAllWargaHandler,
+  addWargaHandler,
+  getWargaByNikHandler,
+  updateWargaByNikHandler,
+  deleteWargaByNikHandler,
+} = require('./handler');
+const {PostWargaValidation} = require('./validation');
 
 const routes = [
   {
     method: 'GET',
-    path: '/warga',
+    path: '/daftar_warga',
     handler: getAllWargaHandler,
   },
   {
     method: 'POST',
-    path: '/warga',
+    path: '/daftar_warga',
     options: {
       validate: {
-        payload: Joi.object({
-          nik: Joi.number().required(),
-          nama: Joi.string().required(),
-          jabatan: Joi.string().optional(),
-          jenis_kelamin: Joi.string().optional(),
-          ttl: Joi.string().optional(),
-          status_perkawinan: Joi.string().optional(),
-          agama: Joi.string().optional(),
-          alamat: Joi.string().optional(),
-          pendidikan: Joi.string().optional(),
-          pekerjaan: Joi.string().optional(),
-        }),
+        payload: PostWargaValidation,
         failAction: (request, h, error) => {
           return error.isJoi
-            ? h.response(error.details[0]).takeover()
+            ? h.response(error.details[0]).code(400).takeover()
             : h.response(error).takeover();
         },
       },
     },
     handler: addWargaHandler,
+  },
+  {
+    method: 'GET',
+    path: '/daftar_warga/{nik}',
+    handler: getWargaByNikHandler,
+  },
+  {
+    method: 'PUT',
+    path: '/daftar_warga/{nik}',
+    handler: updateWargaByNikHandler,
+  },
+  {
+    method: 'DELETE',
+    path: '/daftar_warga/{nik}',
+    handler: deleteWargaByNikHandler,
   },
 ];
 module.exports = routes;
