@@ -1,0 +1,25 @@
+###
+GET http://localhost:3000/daftar_warga
+###
+GET http://localhost:3000/daftar_warga?filter=%7B%7D&range=%5B0%2C9%5D&sort=%5B%22id%22%2C%22ASC%22%5D
+###
+GET http://localhost:3000/daftar_warga/60f2725cf8188b304c8302b1
+###
+POST http://localhost:3000/daftar_warga
+content-type: application/json
+
+{
+    "nik": "12",
+    "nama": "Nama orang",
+    "jabatan": "Jabatannya",
+    "jenis_kelamin": "Pria",
+    "tempat_lahir": "Semarang",
+    "tanggal_lahir" : "2000-01-01T00:00:00.000Z",
+    "status_perkawinan": "Belum Kawin",
+    "agama": "Islam",
+    "alamat": "Aasdasdasdasd",
+    "pendidikan": "Mantab",
+    "pekerjaan": "Orang keren"
+}
+###
+DELETE http://localhost:3000/daftar_warga/60f2729a4feb1c334058ce9b
