@@ -2,14 +2,40 @@ const {wargaModel, iuranModel} = require('./models');
 const {Mongoose} = require('../config/database');
 
 const getAllWargaHandler = async (request, h) => {
-  const result = await wargaModel.find({});
+  const {sort, range} = request.query;
+
+  const sortParsed =
+    sort !== undefined
+      ? sort.replace(/[\[\]\'\"']+/g, '').split(',')
+      : undefined;
+  const sortParameter = sortParsed !== undefined ? sortParsed[0] : undefined;
+  const sortType = sortParsed !== undefined && sortParsed[1] == 'DESC' ? -1 : 1;
+
+  const rangeParsed =
+    range !== undefined ? range.replace(/[\[\]']+/g, '').split(',') : undefined;
+  const min = rangeParsed !== undefined ? parseInt(rangeParsed[0]) : undefined;
+  const max = rangeParsed !== undefined ? parseInt(rangeParsed[1]) : undefined;
+
+  const result =
+    sort !== undefined && range !== undefined
+      ? await wargaModel
+          .find()
+          .sort([[sortParameter, sortType]])
+          .skip(min)
+          .limit(max - min + 1)
+      : await wargaModel.find({});
+
   if (result.length !== 0) {
     return h
       .response({
         status: 'success',
         message: 'Daftar warga berhasil ditemukan',
         docs: result,
-        items: {total: result.length},
+        items: {
+          total: result.length,
+          sort: sort,
+          range: range,
+        },
       })
       .code(200)
       .header('Access-Control-Expose-Headers', 'X-Total-Count')
