@@ -30,4 +30,45 @@ const iuranModel = Mongoose.model(
   },
   'iuran_warga'
 );
-module.exports = {wargaModel, iuranModel};
+
+const suratModel = Mongoose.model(
+  'daftar_surat',
+  {
+    no: Number,
+    perihal: String,
+    isi: String,
+    tanggal: Date,
+    pengirim: String,
+    keterangan: String,
+  },
+  'daftar_surat'
+);
+
+const kejadianModel = Mongoose.model(
+  'daftar_kejadian',
+  {
+    nama: String,
+    deskripsi: String,
+    tanggal: Date,
+  },
+  'daftar_kejadian'
+);
+
+const kegiatanModel = Mongoose.model(
+  'daftar_kegiatan',
+  {
+    nama: String,
+    deskripsi: String,
+    tanggal: Date,
+    tempat: String,
+    jumlah_peserta: Number,
+  },
+  'daftar_kegiatan'
+);
+module.exports = {
+  wargaModel,
+  iuranModel,
+  suratModel,
+  kejadianModel,
+  kegiatanModel,
+};
