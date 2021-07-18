@@ -23,10 +23,11 @@ const iuranModel = Mongoose.model(
   {
     nik: Number,
     nama: String,
-    jenis: String,
+    nama_iuran: String,
     nominal: Number,
     tanggal: Date,
-    Keterangan: String,
+    status: Boolean,
+    keterangan: String,
   },
   'iuran_warga'
 );

@@ -1,5 +1,5 @@
 ###
-GET http://localhost:3000/daftar_warga
+GET http://localhost:3000/daftar_iuran
 ###
 GET http://localhost:3000/daftar_warga?filter=%7B%7D&range=%5B0%2C9%5D&sort=%5B%22id%22%2C%22ASC%22%5D
 ###
