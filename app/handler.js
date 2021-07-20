@@ -4,6 +4,7 @@ const {
   suratModel,
   kegiatanModel,
   kejadianModel,
+  kasModel,
 } = require('./models');
 const {Mongoose} = require('../config/database');
 const {convertDocToData} = require('./utils');
@@ -747,6 +748,7 @@ const getAllKegiatanHandler = async (request, h) => {
       .code(500);
   }
 };
+
 const addKegiatanHandler = async (request, h) => {
   try {
     const kegiatan = new kegiatanModel(request.payload);
@@ -768,6 +770,7 @@ const addKegiatanHandler = async (request, h) => {
       .code(500);
   }
 };
+
 const getKegiatanByIdHandler = async (request, h) => {
   try {
     const {id} = request.params;
@@ -799,6 +802,7 @@ const getKegiatanByIdHandler = async (request, h) => {
       .code(500);
   }
 };
+
 const updateKegiatanByIdHandler = async (request, h) => {
   try {
     const {id} = request.params;
@@ -833,6 +837,7 @@ const updateKegiatanByIdHandler = async (request, h) => {
       .code(500);
   }
 };
+
 const deleteKegiatanByIdHandler = async (request, h) => {
   try {
     const {id} = request.params;
@@ -843,6 +848,181 @@ const deleteKegiatanByIdHandler = async (request, h) => {
       .exec();
 
     const result = await kegiatanModel.deleteOne({
+      _id: new Mongoose.Types.ObjectId(id),
+    });
+
+    if (result.deletedCount !== 0) {
+      const data = convertDocToData(doc[0]);
+      return h.response(data).code(200);
+    }
+
+    return h
+      .response({
+        status: 'fail',
+        message: 'Data tidak ditemukan',
+      })
+      .code(404);
+  } catch (e) {
+    return h
+      .response({
+        status: 'fail',
+        message: 'Terjadi kesalahan pada server',
+        error: e,
+      })
+      .code(500);
+  }
+};
+
+//=============================================================//
+const getAllKasHandler = async (request, h) => {
+  try {
+    const {sort, range} = request.query;
+
+    // Untuk header
+    const count = await kasModel.countDocuments({});
+
+    const sortParsed =
+      sort !== undefined
+        ? sort.replace(/[\[\]\'\"']+/g, '').split(',')
+        : undefined;
+    const sortParameter = sortParsed !== undefined ? sortParsed[0] : undefined;
+    const sortType =
+      sortParsed !== undefined && sortParsed[1] == 'DESC' ? -1 : 1;
+
+    const rangeParsed =
+      range !== undefined
+        ? range.replace(/[\[\]']+/g, '').split(',')
+        : undefined;
+    const min =
+      rangeParsed !== undefined ? parseInt(rangeParsed[0]) : undefined;
+    const max =
+      rangeParsed !== undefined ? parseInt(rangeParsed[1]) : undefined;
+
+    const result =
+      sort !== undefined && range !== undefined
+        ? await kasModel
+            .find()
+            .sort([[sortParameter, sortType]])
+            .skip(min)
+            .limit(max - min + 1)
+        : await kasModel.find({});
+
+    const data = result.map(convertDocToData);
+
+    return h
+      .response(data)
+      .code(200)
+      .header('Access-Control-Expose-Headers', 'X-Total-Count')
+      .header('X-Total-Count', count);
+  } catch (e) {
+    return h
+      .response({
+        status: 'fail',
+        message: 'Terjadi kesalahan pada server',
+      })
+      .code(500);
+  }
+};
+
+const addKasHandler = async (request, h) => {
+  try {
+    const kas = new kasModel(request.payload);
+    const result = await kas.save();
+
+    const data = convertDocToData(result);
+
+    return h
+      .response(data)
+      .code(201)
+      .header('Access-Control-Expose-Headers', 'X-Total-Count')
+      .header('X-Total-Count', result.length);
+  } catch (e) {
+    return h
+      .response({
+        status: 'fail',
+        message: 'Data kas gagal ditambahkan',
+      })
+      .code(500);
+  }
+};
+
+const getKasByIdHandler = async (request, h) => {
+  try {
+    const {id} = request.params;
+    const result = await kasModel
+      .find({_id: new Mongoose.Types.ObjectId(id)})
+      .exec();
+    if (result.length !== 0) {
+      const data = convertDocToData(result[0]);
+
+      return h
+        .response(data)
+        .code(200)
+        .header('Access-Control-Expose-Headers', 'X-Total-Count')
+        .header('X-Total-Count', result.length);
+    }
+
+    return h
+      .response({
+        status: 'fail',
+        message: 'Data kas tidak ditemukan',
+      })
+      .code(404);
+  } catch (e) {
+    return h
+      .response({
+        status: 'fail',
+        message: 'Terjadi kesalahan pada server',
+      })
+      .code(500);
+  }
+};
+
+const updateKasByIdHandler = async (request, h) => {
+  try {
+    const {id} = request.params;
+
+    const result = await kasModel.findOneAndUpdate(
+      {_id: new Mongoose.Types.ObjectId(id)},
+      request.payload,
+      {new: true, useFindAndModify: false}
+    );
+    if (result !== null) {
+      const data = convertDocToData(result);
+
+      return h
+        .response(data)
+        .code(200)
+        .header('Access-Control-Expose-Headers', 'X-Total-Count')
+        .header('X-Total-Count', result.length);
+    }
+
+    return h
+      .response({
+        status: 'fail',
+        message: 'Data tidak ditemukan',
+      })
+      .code(404);
+  } catch (e) {
+    return h
+      .response({
+        status: 'fail',
+        message: 'Terjadi kesalahan pada server',
+      })
+      .code(500);
+  }
+};
+
+const deleteKasByIdHandler = async (request, h) => {
+  try {
+    const {id} = request.params;
+
+    // Ambil docnya untuk response, di admin panel bisa Undo jadi perlu docnya
+    const doc = await kasModel
+      .find({_id: new Mongoose.Types.ObjectId(id)})
+      .exec();
+
+    const result = await kasModel.deleteOne({
       _id: new Mongoose.Types.ObjectId(id),
     });
 
@@ -894,4 +1074,9 @@ module.exports = {
   getKegiatanByIdHandler,
   updateKegiatanByIdHandler,
   deleteKegiatanByIdHandler,
+  getAllKasHandler,
+  addKasHandler,
+  getKasByIdHandler,
+  updateKasByIdHandler,
+  deleteKasByIdHandler,
 };

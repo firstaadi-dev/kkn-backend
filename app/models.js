@@ -66,10 +66,24 @@ const kegiatanModel = Mongoose.model(
   },
   'daftar_kegiatan'
 );
+
+const kasModel = Mongoose.model(
+  'daftar_kas',
+  {
+    no: Number,
+    tanggal: Date,
+    ref: String,
+    debit: Number,
+    kredit: Number,
+    rincian: String,
+  },
+  'daftar_kas'
+);
 module.exports = {
   wargaModel,
   iuranModel,
   suratModel,
   kejadianModel,
   kegiatanModel,
+  kasModel
 };

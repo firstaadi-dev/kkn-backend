@@ -24,6 +24,11 @@ const {
   getKegiatanByIdHandler,
   updateKegiatanByIdHandler,
   deleteKegiatanByIdHandler,
+  getAllKasHandler,
+  addKasHandler,
+  getKasByIdHandler,
+  updateKasByIdHandler,
+  deleteKasByIdHandler,
 } = require('./handler');
 const {PostWargaValidation} = require('./validation');
 
@@ -181,6 +186,36 @@ const routes = [
     method: 'DELETE',
     path: '/daftar_kegiatan/{id}',
     handler: deleteKegiatanByIdHandler,
+  },
+  //=============================================================//
+  {
+    method: 'GET',
+    path: '/daftar_kas',
+    handler: getAllKasHandler,
+  },
+  {
+    method: 'POST',
+    path: '/daftar_kas',
+    options: {
+      validate: {},
+    },
+    handler: addKasHandler,
+  },
+  {
+    method: 'GET',
+    path: '/daftar_kas/{id}',
+    handler: getKasByIdHandler,
+  },
+
+  {
+    method: 'PUT',
+    path: '/daftar_kas/{id}',
+    handler: updateKasByIdHandler,
+  },
+  {
+    method: 'DELETE',
+    path: '/daftar_kas/{id}',
+    handler: deleteKasByIdHandler,
   },
 ];
 module.exports = routes;
