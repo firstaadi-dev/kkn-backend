@@ -4,7 +4,7 @@ const routes = require("./app/routes");
 const init = async () => {
   require("dotenv").config();
   const server = Hapi.server({
-    port: 3000,
+    port: 8080,
     host: process.env.NODE_ENV !== "production" ? "localhost" : "0.0.0.0",
     routes: {
       cors: {
