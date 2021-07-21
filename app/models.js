@@ -1,5 +1,16 @@
 const {Mongoose} = require('../config/database');
 
+const userModel = Mongoose.model(
+  'daftar_user',
+  {
+    first_name: {type: String, default: null},
+    last_name: {type: String, default: null},
+    email: {type: String, unique: true},
+    password: String,
+    token: String,
+  },
+  'daftar_user'
+);
 const wargaModel = Mongoose.model(
   'daftar_warga',
   {
@@ -80,10 +91,11 @@ const kasModel = Mongoose.model(
   'daftar_kas'
 );
 module.exports = {
+  userModel,
   wargaModel,
   iuranModel,
   suratModel,
   kejadianModel,
   kegiatanModel,
-  kasModel
+  kasModel,
 };

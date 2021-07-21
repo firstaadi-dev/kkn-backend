@@ -1,4 +1,5 @@
 const {
+  registerHandler,
   getAllWargaHandler,
   addWargaHandler,
   getWargaByIdHandler,
@@ -33,6 +34,30 @@ const {
 const {PostWargaValidation} = require('./validation');
 
 const routes = [
+  {
+    method: 'POST',
+    path: '/register',
+    config: {auth: false},
+    handler: registerHandler,
+  },
+  {
+    method: 'GET',
+    path: '/login',
+    config: {auth: false},
+    handler: function (request, h) {
+      return {text: 'Token not required'};
+    },
+  },
+  {
+    method: 'GET',
+    path: '/restricted',
+    config: {auth: 'jwt'},
+    handler: function (request, h) {
+      const response = h.response({text: 'You used a Token!'});
+      response.header('Authorization', request.headers.authorization);
+      return response;
+    },
+  },
   {
     method: 'GET',
     path: '/daftar_warga',

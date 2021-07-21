@@ -1,4 +1,5 @@
 const {
+  userModel,
   wargaModel,
   iuranModel,
   suratModel,
@@ -8,7 +9,57 @@ const {
 } = require('./models');
 const {Mongoose} = require('../config/database');
 const {convertDocToData} = require('./utils');
+const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 
+const registerHandler = async (request, h) => {
+  try {
+    require('dotenv').config();
+    const {first_name, last_name, email, password} = request.payload;
+
+    if (!(first_name && last_name && email && password)) {
+      return h
+        .response({
+          status: 'fail',
+          message: 'Harap masukkan email dan password yang valid',
+        })
+        .code(400);
+    }
+
+    const oldUser = await userModel.findOne({email});
+
+    if (oldUser) {
+      return h
+        .response({
+          status: 'fail',
+          message: 'Nama pengguna sudah ada, silahkan login',
+        })
+        .code(409);
+    }
+
+    const encryptedPassword = await bcrypt.hash(password, 10);
+
+    const user = await userModel.create({
+      first_name,
+      last_name,
+      email: email.toLowerCase(),
+      password: encryptedPassword,
+    });
+
+    const token = jwt.sign({user_id: user._id, email}, process.env.PRIVATE_KEY);
+    user.token = token;
+
+    return h.response(user).code(201);
+  } catch {
+    return h
+      .response({
+        status: 'fail',
+        message: 'Terjadi kesalahan pada server',
+      })
+      .code(500);
+  }
+};
+//=============================================================//
 const getAllWargaHandler = async (request, h) => {
   try {
     const {sort, range} = request.query;
@@ -1049,6 +1100,7 @@ const deleteKasByIdHandler = async (request, h) => {
 };
 
 module.exports = {
+  registerHandler,
   getAllWargaHandler,
   addWargaHandler,
   getWargaByIdHandler,

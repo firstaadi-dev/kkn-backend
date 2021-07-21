@@ -13,4 +13,14 @@ const PostWargaValidation = Joi.object({
   pekerjaan: Joi.string().optional(),
 });
 
-module.exports = {PostWargaValidation};
+const jwtValidate = async function (decoded, request, h) {
+  // Checks if credential is valid
+  const isAuth = true;
+  if (!isAuth) {
+    return {isValid: false};
+  } else {
+    return {isValid: true};
+  }
+};
+
+module.exports = {PostWargaValidation, jwtValidate};
