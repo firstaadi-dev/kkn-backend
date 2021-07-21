@@ -4,6 +4,7 @@ require('dotenv').config();
 Mongoose.connect(process.env.DB_URL, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
+  useCreateIndex: true,
 });
 
 const db = Mongoose.connection;
