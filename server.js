@@ -13,10 +13,8 @@ const init = async () => {
       },
     },
   });
-  const validate = async function (decoded, request, h) {
-    console.log(decoded);
+  const validate = async function (decoded) {
     const isValid = await userModel.findById(decoded.user_id);
-    console.log(isValid);
     if (isValid) {
       return {isValid: true};
     } else {

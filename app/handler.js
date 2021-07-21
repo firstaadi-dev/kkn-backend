@@ -15,18 +15,18 @@ const jwt = require('jsonwebtoken');
 const registerHandler = async (request, h) => {
   try {
     require('dotenv').config();
-    const {first_name, last_name, email, password} = request.payload;
+    const {username, password} = request.payload;
 
-    if (!(first_name && last_name && email && password)) {
+    if (!(username && password)) {
       return h
         .response({
           status: 'fail',
-          message: 'Harap masukkan email dan password yang valid',
+          message: 'Harap masukkan username dan password yang valid',
         })
         .code(400);
     }
 
-    const oldUser = await userModel.findOne({email});
+    const oldUser = await userModel.findOne({username});
 
     if (oldUser) {
       return h
@@ -40,17 +40,18 @@ const registerHandler = async (request, h) => {
     const encryptedPassword = await bcrypt.hash(password, 10);
 
     const user = await userModel.create({
-      first_name,
-      last_name,
-      email: email.toLowerCase(),
+      username: username.toLowerCase(),
       password: encryptedPassword,
     });
 
-    const token = jwt.sign({user_id: user._id, email}, process.env.PRIVATE_KEY);
+    const token = jwt.sign(
+      {user_id: user._id, username},
+      process.env.PRIVATE_KEY
+    );
     user.token = token;
 
     return h.response(user).code(201);
-  } catch {
+  } catch (e) {
     return h
       .response({
         status: 'fail',
@@ -62,9 +63,8 @@ const registerHandler = async (request, h) => {
 
 const loginHandler = async (request, h) => {
   try {
-    console.log(request.payload);
-    const {email, password} = request.payload;
-    if (!(email && password)) {
+    const {username, password} = request.payload;
+    if (!(username && password)) {
       return h
         .response({
           status: 'fail',
@@ -73,12 +73,12 @@ const loginHandler = async (request, h) => {
         .code(400);
     }
 
-    const user = await userModel.findOne({email});
+    const user = await userModel.findOne({username});
     if (user && (await bcrypt.compare(password, user.password))) {
       const token = jwt.sign(
         {
           user_id: user._id,
-          email,
+          username,
         },
         process.env.PRIVATE_KEY,
         {
@@ -92,9 +92,9 @@ const loginHandler = async (request, h) => {
     return h
       .response({
         status: 'fail',
-        message: 'Invalid Credentials',
+        message: 'Username atau password salah',
       })
-      .code(400);
+      .code(401);
   } catch (err) {
     return h
       .response({

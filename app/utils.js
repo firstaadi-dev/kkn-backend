@@ -1,5 +1,3 @@
-// By Ijal
-
 /**
  * Dipake untuk convert doc yang diambil dari Mongoose ke data untuk response
  * @param doc - Single document dari fetch database
@@ -13,5 +11,4 @@ const convertDocToData = (doc) => {
 
   return data;
 };
-
 module.exports = {convertDocToData};

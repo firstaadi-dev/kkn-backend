@@ -3,9 +3,7 @@ const {Mongoose} = require('../config/database');
 const userModel = Mongoose.model(
   'daftar_user',
   {
-    first_name: {type: String, default: null},
-    last_name: {type: String, default: null},
-    email: {type: String, unique: true},
+    username: {type: String, unique: true},
     password: String,
     token: String,
   },
