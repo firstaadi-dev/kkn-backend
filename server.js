@@ -1,4 +1,5 @@
 const Hapi = require('@hapi/hapi');
+const {userModel} = require('./app/models');
 const routes = require('./app/routes');
 
 const init = async () => {
@@ -13,7 +14,14 @@ const init = async () => {
     },
   });
   const validate = async function (decoded, request, h) {
-    return {isValid: true};
+    console.log(decoded);
+    const isValid = await userModel.findById(decoded.user_id);
+    console.log(isValid);
+    if (isValid) {
+      return {isValid: true};
+    } else {
+      return {isValid: false};
+    }
   };
 
   await server.register(require('hapi-auth-jwt2'));

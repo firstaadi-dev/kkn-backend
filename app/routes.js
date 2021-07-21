@@ -47,16 +47,16 @@ const routes = [
     config: {auth: false},
     handler: loginHandler,
   },
-  {
-    method: 'GET',
-    path: '/restricted',
-    config: {auth: 'jwt'},
-    handler: function (request, h) {
-      const response = h.response({text: 'You used a Token!'});
-      response.header('Authorization', request.headers.authorization);
-      return response;
-    },
-  },
+  // {
+  //   method: 'GET',
+  //   path: '/restricted',
+  //   config: {auth: 'jwt'},
+  //   handler: function (request, h) {
+  //     const response = h.response({text: 'You used a Token!'});
+  //     response.header('Authorization', request.headers.authorization);
+  //     return response;
+  //   },
+  // },
   {
     method: 'GET',
     path: '/daftar_warga',
