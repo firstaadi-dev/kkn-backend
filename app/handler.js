@@ -59,6 +59,52 @@ const registerHandler = async (request, h) => {
       .code(500);
   }
 };
+
+const loginHandler = async (request, h) => {
+  // try {
+  console.log(request.payload);
+  const {email, password} = request.payload;
+  if (!(email && password)) {
+    return h
+      .response({
+        status: 'fail',
+        message: 'Data yang diberikan tidak lengkap',
+      })
+      .code(400);
+  }
+
+  const user = await userModel.findOne({email});
+  if (user && (await bcrypt.compare(password, user.password))) {
+    const token = jwt.sign(
+      {
+        user_id: user._id,
+        email,
+      },
+      process.env.PRIVATE_KEY,
+      {
+        expiresIn: '2h',
+      }
+    );
+    user.token = token;
+
+    return h.response(user).code(200);
+  }
+  return h
+    .response({
+      status: 'fail',
+      message: 'Invalid Credentials',
+    })
+    .code(400);
+  // } catch (err) {
+  //   return h
+  //     .response({
+  //       status: 'fail',
+  //       message: 'Terjadi kesalahan pada server',
+  //       error: err,
+  //     })
+  //     .code(500);
+  // }
+};
 //=============================================================//
 const getAllWargaHandler = async (request, h) => {
   try {
@@ -1101,6 +1147,7 @@ const deleteKasByIdHandler = async (request, h) => {
 
 module.exports = {
   registerHandler,
+  loginHandler,
   getAllWargaHandler,
   addWargaHandler,
   getWargaByIdHandler,

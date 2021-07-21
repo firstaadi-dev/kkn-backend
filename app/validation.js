@@ -1,4 +1,5 @@
 const Joi = require('joi');
+
 const PostWargaValidation = Joi.object({
   nik: Joi.number().required(),
   nama: Joi.string().required(),
@@ -13,14 +14,5 @@ const PostWargaValidation = Joi.object({
   pekerjaan: Joi.string().optional(),
 });
 
-const jwtValidate = async function (decoded, request, h) {
-  // Checks if credential is valid
-  const isAuth = true;
-  if (!isAuth) {
-    return {isValid: false};
-  } else {
-    return {isValid: true};
-  }
-};
 
-module.exports = {PostWargaValidation, jwtValidate};
+module.exports = {PostWargaValidation};

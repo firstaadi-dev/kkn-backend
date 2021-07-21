@@ -1,5 +1,6 @@
 const {
   registerHandler,
+  loginHandler,
   getAllWargaHandler,
   addWargaHandler,
   getWargaByIdHandler,
@@ -41,12 +42,10 @@ const routes = [
     handler: registerHandler,
   },
   {
-    method: 'GET',
+    method: 'POST',
     path: '/login',
     config: {auth: false},
-    handler: function (request, h) {
-      return {text: 'Token not required'};
-    },
+    handler: loginHandler,
   },
   {
     method: 'GET',

@@ -1,6 +1,5 @@
 const Hapi = require('@hapi/hapi');
 const routes = require('./app/routes');
-const validate = require('./app/validation');
 
 const init = async () => {
   require('dotenv').config();
@@ -13,12 +12,16 @@ const init = async () => {
       },
     },
   });
+  const validate = async function (decoded, request, h) {
+    return {isValid: true};
+  };
 
   await server.register(require('hapi-auth-jwt2'));
   server.auth.strategy('jwt', 'jwt', {
     key: process.env.PRIVATE_KEY,
     validate,
   });
+
   server.auth.default('jwt');
 
   server.route(routes);
