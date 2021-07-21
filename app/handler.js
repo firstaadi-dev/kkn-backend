@@ -52,6 +52,7 @@ const registerHandler = async (request, h) => {
 
     return h.response(user).code(201);
   } catch (e) {
+    console.log(e);
     return h
       .response({
         status: 'fail',
